@@ -1,13 +1,15 @@
 const express = require('express')
 const router = express.Router()
 const productServices = require('../services/products')
+const userServices = require('../services/users')
 const verifyToken = require('../controllers/verifyToken')
 
 
-const mongoConnection = new productServices()
+const mongoConnectionProducts = new productServices()
+const mongoConnectionUsers = new userServices()
 router.get('/products', async (req, res) => {
   console.log("Testing products")
-  const products = await mongoConnection.getProducts()
+  const products = await mongoConnectionProducts.getProducts()
   res.json({
     data: products,
     message: 'hola'
@@ -19,10 +21,20 @@ router.post('/vehiculos', verifyToken, async (req, res) => {
   // res.status(200).send(decoded);
   // Search the Info base on the ID
   // const user = await User.findById(decoded.id, { password: 0});
-  const user = await mongoConnection.getUser(req.userId);
+  const user = await mongoConnectionUsers.getUser(req.userId);
   if (!user) {
       return res.status(404).send("No user found.");
   }
+  const tipo=user.type
+  if(tipo){
+    console.log("Es un arrendador y su id es... ", user._id)
+
+
+
+  }else{
+    console.log("No es un arrendador")
+  }
+
   console.log(user)
   res.status(200).json(user);
 });
@@ -33,7 +45,7 @@ router.post('/vehiculos', verifyToken, async (req, res) => {
 router.get('/products/:id', async function (req, res, next) {
   const { id } = req.params
   try {
-    const product = await mongoConnection.getProduct(id)
+    const product = await mongoConnectionProducts.getProduct(id)
     console.log(product)
     res.status(200).json(
       {
@@ -57,7 +69,7 @@ router.post('/products', async (req, res) => {
     images,
     idProductor
   } = req.body
-  const user = await mongoConnection.createProduct({
+  const user = await mongoConnectionProducts.createProduct({
     nombre,
     valor_unitario,
     unidad_medida,
@@ -79,7 +91,7 @@ router.put('/users/:id', async (req, res) => {
     cantidad_disponible,
     categoria,
     descripcion } = req.body
-  const user = await mongoConnection.updateProduct(id, {
+  const user = await mongoConnectionProducts.updateProduct(id, {
     nombre,
     valor_unitario,
     unidad_medida,
@@ -93,7 +105,7 @@ router.put('/users/:id', async (req, res) => {
 
 router.delete('/products/:id', async (req, res) => {
   const { id } = req.params
-  const user = await mongoConnection.deleteProduct(id)
+  const user = await mongoConnectionProducts.deleteProduct(id)
   res.json(user)
 })
 

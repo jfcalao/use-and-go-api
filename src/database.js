@@ -45,6 +45,11 @@ class MongoLib {
       return db.collection(collection).findOne({username: object})
     })
   }
+  getWhere(collection, object){
+    return this.connect().then(db => {
+      return db.collection(collection).find(object)
+    })
+  }
   create(collection, data) {
     return this.connect().then(db => {
       return db.collection(collection).insertOne(data)
