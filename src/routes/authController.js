@@ -25,15 +25,17 @@ const encryptPassword = async (password) => {
 router.post('/singup', cors(), async (req, res) => {
     try {
         // Receiving Data
-        let { name, username, password, email, type } = req.body;
+        let { name, lastname, gender, fecha_nacimiento,
+            cedula, calificación, username, password,
+            email, type, foto } = req.body;
         password = await encryptPassword(password)
         // Creating a new User
         const user = await mongoConnection.createUser({
-            name,
-            username,
-            password,
-            email,
-            type
+            name, lastname,
+            gender, fecha_nacimiento,
+            cedula, calificación,
+            username, password,
+            email, type, foto
         })
 
 
@@ -61,18 +63,18 @@ router.post('/me', verifyToken, async (req, res) => {
     res.status(200).json(user);
 });
 
-router.post('/singin', async (req, res) => {
+router.post('/login', async (req, res) => {
     const user = await mongoConnection.getUserByUsername(req.body.username)
     console.log("El usuario que viene ", user)
     if (Object.keys(user).length === 0) {
-        return res.status(404).send("The email doesn't exists")
+        return res.status(404).send("The user doesn't exists")
     }
 
     const validPassword = await bcrypt.compare(req.body.password, user.password)
     if (!validPassword) {
         return res.status(401).send({ auth: false, token: null });
     }
-    const userType= user.type
+    const userType = user.type
     const token = jwt.sign({ id: user.id }, config.secret, {
         expiresIn: 60 * 60 * 24
     });

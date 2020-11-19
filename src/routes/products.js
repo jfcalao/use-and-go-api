@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const productServices = require('../services/products')
+const verifyToken = require('../controllers/verifyToken')
 
 
 const mongoConnection = new productServices()
@@ -12,6 +13,22 @@ router.get('/products', async (req, res) => {
     message: 'hola'
   })
 })
+
+
+router.post('/vehiculos', verifyToken, async (req, res) => {
+  // res.status(200).send(decoded);
+  // Search the Info base on the ID
+  // const user = await User.findById(decoded.id, { password: 0});
+  const user = await mongoConnection.getUser(req.userId);
+  if (!user) {
+      return res.status(404).send("No user found.");
+  }
+  console.log(user)
+  res.status(200).json(user);
+});
+
+
+
 
 router.get('/products/:id', async function (req, res, next) {
   const { id } = req.params
