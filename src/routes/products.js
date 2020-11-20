@@ -60,7 +60,7 @@ router.post('/vehiculos/rented', async (req, res) => {
   });
 }
 )
-router.post('/vehiculos/rent', async (req, res) => {
+router.post('/vehiculos/rentar', async (req, res) => {
 
 
   const idVehiculo = req.body.id
