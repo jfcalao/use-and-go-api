@@ -2,11 +2,15 @@ const express = require('express')
 const router = express.Router()
 const productServices = require('../services/products')
 const userServices = require('../services/users')
+const vehiculosServices = require('../services/vehiculos')
+const arrendadorServices = require('../services/arrendador')
 const verifyToken = require('../controllers/verifyToken')
-
+const { ObjectId } = require('mongodb')
 
 const mongoConnectionProducts = new productServices()
 const mongoConnectionUsers = new userServices()
+const mongoConnectionVehiculos = new vehiculosServices()
+const mongoConnectionArrendador = new arrendadorServices()
 router.get('/products', async (req, res) => {
   console.log("Testing products")
   const products = await mongoConnectionProducts.getProducts()
@@ -15,7 +19,13 @@ router.get('/products', async (req, res) => {
     message: 'hola'
   })
 })
+router.post('/vehiculos/register', verifyToken, async (req, res) => {
 
+  const vehiculo=req.body
+
+  console.log("de")
+
+})
 
 router.post('/vehiculos', verifyToken, async (req, res) => {
   // res.status(200).send(decoded);
@@ -23,20 +33,38 @@ router.post('/vehiculos', verifyToken, async (req, res) => {
   // const user = await User.findById(decoded.id, { password: 0});
   const user = await mongoConnectionUsers.getUser(req.userId);
   if (!user) {
-      return res.status(404).send("No user found.");
+    return res.status(404).send("No user found.");
   }
-  const tipo=user.type
-  if(tipo){
-    console.log("Es un arrendador y su id es... ", user._id)
+  const tipo = user.type
+
+  if (tipo==="1") {
+    const objeto = { idUser: (user._id).toString() }
+    const arrendador = await mongoConnectionArrendador.getUserWhere(objeto)
+
+    const idVehiculos = arrendador[0].vehiculos
+    console.log("Este es id vehiculos", idVehiculos)
+    
+    const vehiculos = await Promise.all(idVehiculos.map( async item => {
+      console.log("EEste es el item ", ObjectId(item.toString()))
+      const object = { _id: ObjectId(item) }
+      console.log(object)
+      const vehiculo =  await mongoConnectionVehiculos.getVehiculoWhere(object)
+      return vehiculo
+    }))
+    
+    console.log("Estos son los vehiculos ", vehiculos)
+    return res.status(200).json({
+      state: "ok dador",
+      vehiculos: vehiculos});
 
 
-
-  }else{
+  } else {
     console.log("No es un arrendador")
+    const vehiculo = await mongoConnectionVehiculos.getVehiculos()
+    return res.status(200).json(vehiculo);
+
   }
 
-  console.log(user)
-  res.status(200).json(user);
 });
 
 

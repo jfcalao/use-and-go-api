@@ -26,14 +26,14 @@ router.post('/singup', cors(), async (req, res) => {
     try {
         // Receiving Data
         let { name, lastname, gender, fecha_nacimiento,
-            cedula, calificación, username, password,
+            cedula, calificacion, username, password,
             email, type, foto } = req.body;
         password = await encryptPassword(password)
         // Creating a new User
         const user = await mongoConnection.createUser({
             name, lastname,
             gender, fecha_nacimiento,
-            cedula, calificación,
+            cedula, calificacion,
             username, password,
             email, type, foto
         })
@@ -75,7 +75,8 @@ router.post('/login', async (req, res) => {
         return res.status(401).send({ auth: false, token: null });
     }
     const userType = user.type
-    const token = jwt.sign({ id: user.id }, config.secret, {
+    console.log("este id base dtos ", user._id)
+    const token = jwt.sign({ id: user._id }, config.secret, {
         expiresIn: 60 * 60 * 24
     });
     res.status(200).json({ auth: true, token, userType });

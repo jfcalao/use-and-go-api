@@ -10,4 +10,4 @@ const config = {
   dbName: process.env.DB_NAME,
   secret: process.env.SECRET || 'thisiscoinsvertsecret'
 }
-module.exports = { config }
+module.exports = { config } 

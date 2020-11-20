@@ -1,37 +1,43 @@
 const MongoLib = require('../database')
-class VehiculosService{
+class ArrendadorService{
 
   constructor(){
-    this.collection='vehiculos'
+    this.collection='arrendador'
     this.mongoDB= new MongoLib()
   }
   //async getUsers({tags}){
-  async getVehiculos(){
+  async getUsers(){
     //const query= tags && {tags: {$in: tags}}
     //const movies= await this.mongoDB.getAll(this.collection,query)
     const movies= await this.mongoDB.getAll(this.collection)
     return movies || []
   }
-  async getVehiculo(userId){
+  async getUser(userId){
     const movie= await this.mongoDB.get(this.collection, userId)
     return movie || {}
   }
-  async getVehiculoWhere(object){
-    const movie= await this.mongoDB.getWhere(this.collection, object)
+  async getUserWhere(objeto){
+    const movie= await this.mongoDB.getWhere(this.collection, objeto)
+    return movie 
+    
+  }
+  async getUserByUsername(username){
+    console.log('MOVIE ID IN MOVIE SERVICE ', username)
+    const movie= await this.mongoDB.getUserByUsername(this.collection, username)
     return movie || {}
     
   }
-  async createVehiculo(movie){
+  async createUser(movie){
     const createMovieId= await this.mongoDB.create(this.collection, movie)
     return createMovieId
   }
-  async updateVehiculo(movieId, movie= {}){
+  async updateUser(movieId, movie= {}){
     const updateMovieId= await this.mongoDB.update(this.collection, movieId, movie)
     return updateMovieId
   }
-  async deleteVehiculo(movieId){
+  async deleteUser(movieId){
     const deletedMovieId= await this.mongoDB.delete(this.collection, movieId)
     return deletedMovieId
   }
 }
-module.exports= VehiculosService
+module.exports= ArrendadorService
