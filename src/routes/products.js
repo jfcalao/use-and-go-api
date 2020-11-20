@@ -32,22 +32,40 @@ router.post('/vehiculos/register', verifyToken, async (req, res) => {
   console.log("Este es el arrendador de esa vaina", arrendador)
   arrendador[0].vehiculos.push(vehiculoId.toString())
   console.log("Este es el arrendador de esa vaina", arrendador[0].vehiculos)
-  const arren={
+  const arren = {
     ...arrendador[0], vehiculos: arrendador[0].vehiculos
   }
   console.log("Este es arren ", arren)
   console.log("Este es arren id ", arrendador[0]._id)
 
   const newArrendador = await mongoConnectionArrendador.updateUser(arrendador[0]._id, arren)
-  const nuevo= await mongoConnectionArrendador.getUser(newArrendador._id)
+  const nuevo = await mongoConnectionArrendador.getUser(newArrendador._id)
   res.status(200).json({
     message: "vehiculo agregado correctamente",
     vehiculo: vehiculoId
   })
-  
+
   console.log("Nuevo arrendador: ", nuevo)
 })
+router.post('/vehiculos/rented', async (req, res) => {
 
+
+  const idVehiculo = req.body.id
+  vehiculo = await mongoConnectionVehiculos.getVehiculo(idVehiculo)
+  const vehi = {
+    ...vehiculo,
+    alquilado: true
+  }
+  const newVehiculo = await mongoConnectionVehiculos.updateVehiculo(idVehiculo, vehi)
+  res.status(200).json({
+    message: "vehiculo alquilado correctamente",
+    newVehiculo: newVehiculo
+  })
+
+
+
+
+})
 router.post('/vehiculos', verifyToken, async (req, res) => {
   // res.status(200).send(decoded);
   // Search the Info base on the ID
@@ -85,7 +103,10 @@ router.post('/vehiculos', verifyToken, async (req, res) => {
   } else {
     console.log("No es un arrendador")
     let nombreCompleto = `${user.name} ${user.lastname}`
-    const vehiculo = await mongoConnectionVehiculos.getVehiculos()
+    const object = {
+      alquilado: false
+    }
+    const vehiculo = await mongoConnectionVehiculos.getVehiculoWhere(object)
     return res.status(200).json({
       state: "ok dador",
       vehiculos: vehiculo,
