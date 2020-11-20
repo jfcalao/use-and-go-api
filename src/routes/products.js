@@ -60,7 +60,7 @@ router.post('/vehiculos/rented', async (req, res) => {
   });
 }
 )
-/* router.post('/vehiculos/rent', async (req, res) => {
+router.post('/vehiculos/rent', async (req, res) => {
 
 
   const idVehiculo = req.body.id
@@ -76,7 +76,7 @@ router.post('/vehiculos/rented', async (req, res) => {
   })
   const 
   
-}) */
+})
 
   router.post('/vehiculos', verifyToken, async (req, res) => {
     // res.status(200).send(decoded);
