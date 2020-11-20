@@ -41,7 +41,7 @@ router.post('/vehiculos/register', verifyToken, async (req, res) => {
   const newArrendador = await mongoConnectionArrendador.updateUser(arrendador[0]._id, arren)
   const nuevo= await mongoConnectionArrendador.getUser(newArrendador._id)
   res.status(200).json({
-    message: "vehiculo agregado",
+    message: "vehiculo agregado correctamente",
     vehiculo: vehiculoId
   })
   
@@ -84,8 +84,13 @@ router.post('/vehiculos', verifyToken, async (req, res) => {
 
   } else {
     console.log("No es un arrendador")
+    let nombreCompleto = `${user.name} ${user.lastname}`
     const vehiculo = await mongoConnectionVehiculos.getVehiculos()
-    return res.status(200).json(vehiculo);
+    return res.status(200).json({
+      state: "ok dador",
+      vehiculos: vehiculo,
+      nombreUsuario: nombreCompleto
+    });
 
   }
 
