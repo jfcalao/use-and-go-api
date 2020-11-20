@@ -48,7 +48,7 @@ router.post('/vehiculos/register', verifyToken, async (req, res) => {
   console.log("Nuevo arrendador: ", nuevo)
 })
 
-router.post('/vehiculos/rented', async (req, res) => {
+/* router.post('/vehiculos/rented', async (req, res) => {
   const object = {
     alquilado: true
   }
@@ -59,7 +59,7 @@ router.post('/vehiculos/rented', async (req, res) => {
     nombreUsuario: nombreCompleto
   });
 }
-)
+) */
 router.post('/vehiculos/rent', async (req, res) => {
 
 
