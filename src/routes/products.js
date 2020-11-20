@@ -47,7 +47,20 @@ router.post('/vehiculos/register', verifyToken, async (req, res) => {
 
   console.log("Nuevo arrendador: ", nuevo)
 })
+
 router.post('/vehiculos/rented', async (req, res) => {
+  const object = {
+    alquilado: true
+  }
+  const vehiculo = await mongoConnectionVehiculos.getVehiculoWhere(object)
+  return res.status(200).json({
+    state: "ok dador",
+    vehiculos: vehiculo,
+    nombreUsuario: nombreCompleto
+  });
+}
+)
+router.post('/vehiculos/rent', async (req, res) => {
 
 
   const idVehiculo = req.body.id
@@ -61,61 +74,60 @@ router.post('/vehiculos/rented', async (req, res) => {
     message: "vehiculo alquilado correctamente",
     newVehiculo: newVehiculo
   })
-
-
-
-
+  const 
+  
 })
-router.post('/vehiculos', verifyToken, async (req, res) => {
-  // res.status(200).send(decoded);
-  // Search the Info base on the ID
-  // const user = await User.findById(decoded.id, { password: 0});
-  const user = await mongoConnectionUsers.getUser(req.userId);
 
-  if (!user) {
-    return res.status(404).send("No user found.");
-  }
-  const tipo = user.type
-  console.log("Este es el tipo", req.userId)
-  if (tipo === "1") {
-    const objeto = { idUser: (user._id).toString() }
-    const arrendador = await mongoConnectionArrendador.getUserWhere(objeto)
+  router.post('/vehiculos', verifyToken, async (req, res) => {
+    // res.status(200).send(decoded);
+    // Search the Info base on the ID
+    // const user = await User.findById(decoded.id, { password: 0});
+    const user = await mongoConnectionUsers.getUser(req.userId);
 
-    const idVehiculos = arrendador[0].vehiculos
-    console.log("Este es id vehiculos", idVehiculos)
-
-    const vehiculos = await Promise.all(idVehiculos.map(async item => {
-      console.log("EEste es el item ", ObjectId(item.toString()))
-      const object = { _id: ObjectId(item) }
-      console.log(object)
-      const vehiculo = await mongoConnectionVehiculos.getVehiculoWhere(object)
-      return vehiculo
-    }))
-    let nombreCompleto = `${user.name} ${user.lastname}`
-    console.log("Estos son los vehiculos ", vehiculos)
-    return res.status(200).json({
-      state: "ok dador",
-      vehiculos: vehiculos,
-      nombreUsuario: nombreCompleto
-    });
-
-
-  } else {
-    console.log("No es un arrendador")
-    let nombreCompleto = `${user.name} ${user.lastname}`
-    const object = {
-      alquilado: false
+    if (!user) {
+      return res.status(404).send("No user found.");
     }
-    const vehiculo = await mongoConnectionVehiculos.getVehiculoWhere(object)
-    return res.status(200).json({
-      state: "ok dador",
-      vehiculos: vehiculo,
-      nombreUsuario: nombreCompleto
-    });
+    const tipo = user.type
+    console.log("Este es el tipo", req.userId)
+    if (tipo === "1") {
+      const objeto = { idUser: (user._id).toString() }
+      const arrendador = await mongoConnectionArrendador.getUserWhere(objeto)
 
-  }
+      const idVehiculos = arrendador[0].vehiculos
+      console.log("Este es id vehiculos", idVehiculos)
 
-});
+      const vehiculos = await Promise.all(idVehiculos.map(async item => {
+        console.log("EEste es el item ", ObjectId(item.toString()))
+        const object = { _id: ObjectId(item) }
+        console.log(object)
+        const vehiculo = await mongoConnectionVehiculos.getVehiculoWhere(object)
+        return vehiculo
+      }))
+      let nombreCompleto = `${user.name} ${user.lastname}`
+      console.log("Estos son los vehiculos ", vehiculos)
+      return res.status(200).json({
+        state: "ok dador",
+        vehiculos: vehiculos,
+        nombreUsuario: nombreCompleto
+      });
+
+
+    } else {
+      console.log("No es un arrendador")
+      let nombreCompleto = `${user.name} ${user.lastname}`
+      const object = {
+        alquilado: false
+      }
+      const vehiculo = await mongoConnectionVehiculos.getVehiculoWhere(object)
+      return res.status(200).json({
+        state: "ok dador",
+        vehiculos: vehiculo,
+        nombreUsuario: nombreCompleto
+      });
+
+    }
+
+  });
 
 
 
