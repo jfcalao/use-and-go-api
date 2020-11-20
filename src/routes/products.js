@@ -60,7 +60,7 @@ router.post('/vehiculos/rented', async (req, res) => {
   });
 }
 )
-router.post('/vehiculos/alquilar', async (req, res) => {
+router.post('/vehiculos/rent', async (req, res) => {
 
 
   const idVehiculo = req.body.id
@@ -74,7 +74,6 @@ router.post('/vehiculos/alquilar', async (req, res) => {
     message: "vehiculo alquilado correctamente",
     newVehiculo: newVehiculo
   })
-  const 
   
 })
 
