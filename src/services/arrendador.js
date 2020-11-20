@@ -31,7 +31,8 @@ class ArrendadorService{
     const createMovieId= await this.mongoDB.create(this.collection, movie)
     return createMovieId
   }
-  async updateUser(movieId, movie= {}){
+  async updateUser(movieId, movie){
+    
     const updateMovieId= await this.mongoDB.update(this.collection, movieId, movie)
     return updateMovieId
   }

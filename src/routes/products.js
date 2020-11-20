@@ -21,15 +21,31 @@ router.get('/products', async (req, res) => {
 })
 router.post('/vehiculos/register', verifyToken, async (req, res) => {
 
-  const {modelo, descripcion, tipo, año, foto}=req.body
+  const { modelo, descripcion, tipo, año, foto } = req.body
   const user = await mongoConnectionUsers.getUser(req.userId);
-  const userId=req.userId
+  const userId = req.userId
 
-  const vehiculoId=createVehiculo({modelo, descripcion, tipo, año, foto})
-  console.log("de")
   const objeto = { idUser: (user._id).toString() }
   const arrendador = await mongoConnectionArrendador.getUserWhere(objeto)
+  const vehiculoId = await mongoConnectionVehiculos.createVehiculo({ modelo, descripcion, tipo, año, foto, id_arrendador: arrendador[0]._id })
+  console.log("de ", vehiculoId)
+  console.log("Este es el arrendador de esa vaina", arrendador)
+  arrendador[0].vehiculos.push(vehiculoId.toString())
+  console.log("Este es el arrendador de esa vaina", arrendador[0].vehiculos)
+  const arren={
+    ...arrendador[0], vehiculos: arrendador[0].vehiculos
+  }
+  console.log("Este es arren ", arren)
+  console.log("Este es arren id ", arrendador[0]._id)
 
+  const newArrendador = await mongoConnectionArrendador.updateUser(arrendador[0]._id, arren)
+  const nuevo= await mongoConnectionArrendador.getUser(newArrendador._id)
+  res.status(200).json({
+    message: "vehiculo agregado",
+    vehiculo: vehiculoId
+  })
+  
+  console.log("Nuevo arrendador: ", nuevo)
 })
 
 router.post('/vehiculos', verifyToken, async (req, res) => {
@@ -43,21 +59,21 @@ router.post('/vehiculos', verifyToken, async (req, res) => {
   }
   const tipo = user.type
   console.log("Este es el tipo", req.userId)
-  if (tipo==="1") {
+  if (tipo === "1") {
     const objeto = { idUser: (user._id).toString() }
     const arrendador = await mongoConnectionArrendador.getUserWhere(objeto)
 
     const idVehiculos = arrendador[0].vehiculos
     console.log("Este es id vehiculos", idVehiculos)
-    
-    const vehiculos = await Promise.all(idVehiculos.map( async item => {
+
+    const vehiculos = await Promise.all(idVehiculos.map(async item => {
       console.log("EEste es el item ", ObjectId(item.toString()))
       const object = { _id: ObjectId(item) }
       console.log(object)
-      const vehiculo =  await mongoConnectionVehiculos.getVehiculoWhere(object)
+      const vehiculo = await mongoConnectionVehiculos.getVehiculoWhere(object)
       return vehiculo
     }))
-    let nombreCompleto=`${user.name} ${user.lastname}`
+    let nombreCompleto = `${user.name} ${user.lastname}`
     console.log("Estos son los vehiculos ", vehiculos)
     return res.status(200).json({
       state: "ok dador",

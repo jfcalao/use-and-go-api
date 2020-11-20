@@ -59,7 +59,8 @@ class MongoLib {
   update(collection, id, data) {
     id= ObjectId(id)
     return this.connect().then(db => {
-      return db.collection(collection).updateOne({ _id: id }, { $set: data }, { upsert: true })
+      //return db.collection(collection).updateOne({ _id: id }, { $set: data }, { upsert: true })
+      return db.collection(collection).update({ _id: id }, data )
 
     }).then(result => result.upsertedId || id)
   }
