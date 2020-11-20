@@ -104,7 +104,7 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ id: user._id }, config.secret, {
         expiresIn: 60 * 60 * 24
     });
-    res.status(200).json({ auth: true, token, userType });
+    res.status(200).json({ auth: true, token, userType,  });
 });
 
 router.get('/logout', function (req, res) {
