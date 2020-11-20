@@ -9,6 +9,7 @@ async function verifyToken(req, res, next) {
     }
     // Decode the Tokenreq.userId = decoded.id;
     const decoded = await jwt.verify(token, config.secret);
+    console.log("decoded", decoded)
     req.userId = decoded.id;
     next();
 }

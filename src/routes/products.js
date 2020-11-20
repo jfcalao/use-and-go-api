@@ -21,9 +21,14 @@ router.get('/products', async (req, res) => {
 })
 router.post('/vehiculos/register', verifyToken, async (req, res) => {
 
-  const vehiculo=req.body
+  const {modelo, descripcion, tipo, año, foto}=req.body
+  const user = await mongoConnectionUsers.getUser(req.userId);
+  const userId=req.userId
 
+  const vehiculoId=createVehiculo({modelo, descripcion, tipo, año, foto})
   console.log("de")
+  const objeto = { idUser: (user._id).toString() }
+  const arrendador = await mongoConnectionArrendador.getUserWhere(objeto)
 
 })
 
@@ -32,11 +37,12 @@ router.post('/vehiculos', verifyToken, async (req, res) => {
   // Search the Info base on the ID
   // const user = await User.findById(decoded.id, { password: 0});
   const user = await mongoConnectionUsers.getUser(req.userId);
+
   if (!user) {
     return res.status(404).send("No user found.");
   }
   const tipo = user.type
-
+  console.log("Este es el tipo", req.userId)
   if (tipo==="1") {
     const objeto = { idUser: (user._id).toString() }
     const arrendador = await mongoConnectionArrendador.getUserWhere(objeto)
@@ -55,7 +61,9 @@ router.post('/vehiculos', verifyToken, async (req, res) => {
     console.log("Estos son los vehiculos ", vehiculos)
     return res.status(200).json({
       state: "ok dador",
-      vehiculos: vehiculos});
+      vehiculos: vehiculos,
+      nombreUsuario: user.name
+    });
 
 
   } else {
