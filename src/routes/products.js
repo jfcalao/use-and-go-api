@@ -57,12 +57,12 @@ router.post('/vehiculos', verifyToken, async (req, res) => {
       const vehiculo =  await mongoConnectionVehiculos.getVehiculoWhere(object)
       return vehiculo
     }))
-    
+    let nombreCompleto=`${user.name} ${user.lastname}`
     console.log("Estos son los vehiculos ", vehiculos)
     return res.status(200).json({
       state: "ok dador",
       vehiculos: vehiculos,
-      nombreUsuario: user.name
+      nombreUsuario: nombreCompleto
     });
 
 
