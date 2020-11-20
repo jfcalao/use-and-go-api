@@ -13,7 +13,11 @@ const jwt = require('jsonwebtoken');
 const { config } = require('../config');
 
 const UserService = require('../services/users');
-const mongoConnection = new UserService()
+const ArrendadorService = require('../services/arrendador');
+const ArrendatarioService = require('../services/arrendatario');
+const mongoConnectionUser = new UserService()
+const mongoConnectionArrendador = new ArrendadorService()
+const mongoConnectionArrendatario = new ArrendatarioService()
 
 const encryptPassword = async (password) => {
     const salt = await bcrypt.genSalt(10);
@@ -30,13 +34,34 @@ router.post('/singup', cors(), async (req, res) => {
             email, type, foto } = req.body;
         password = await encryptPassword(password)
         // Creating a new User
-        const user = await mongoConnection.createUser({
+        const user = await mongoConnectionUser.createUser({
             name, lastname,
             gender, fecha_nacimiento,
             cedula, calificacion,
             username, password,
             email, type, foto
         })
+        let userType= await mongoConnectionUser.getUser(user)
+        userType=userType.type
+        console.log("Este es el supuesto tipo ", userType)
+
+        if(userType==="1"){
+            console.log("Veamos si está entrando... ", userType)
+            const arrendador=await mongoConnectionArrendador.createUser({
+                idUser:user,
+                vehiculos:[],
+                arrendamientos:[]
+            })
+            console.log("Arrendador creado ", arrendador)
+        }else{
+            console.log("Este es el user ", user)
+            const arrendatario=await mongoConnectionArrendatario.createUser({
+                idUser:user,
+                id_arrendamientos:[]
+
+            })
+            console.log("Arrendatario creado ", arrendatario)
+        }
 
 
         // Create a Token
@@ -56,7 +81,7 @@ router.post('/me', verifyToken, async (req, res) => {
     // res.status(200).send(decoded);
     // Search the Info base on the ID
     // const user = await User.findById(decoded.id, { password: 0});
-    const user = await mongoConnection.getUser(req.userId);
+    const user = await mongoConnectionUser.getUser(req.userId);
     if (!user) {
         return res.status(404).send("No user found.");
     }
@@ -64,7 +89,7 @@ router.post('/me', verifyToken, async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-    const user = await mongoConnection.getUserByUsername(req.body.username)
+    const user = await mongoConnectionUser.getUserByUsername(req.body.username)
     console.log("El usuario que viene ", user)
     if (Object.keys(user).length === 0) {
         return res.status(404).send("The user doesn't exists")
