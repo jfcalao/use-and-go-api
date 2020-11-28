@@ -75,6 +75,22 @@ router.post('/vehiculos/rent', async (req, res) => {
 
   })
 })
+router.post('/vehiculos/unrent', async (req, res) => {
+
+
+  const idVehiculo = req.body.id
+  vehiculo = await mongoConnectionVehiculos.getVehiculo(idVehiculo)
+  const vehi = {
+    ...vehiculo,
+    alquilado: false
+  }
+  const newVehiculo = await mongoConnectionVehiculos.updateVehiculo(idVehiculo, vehi)
+  res.status(200).json({
+    message: "vehiculo unalquilado correctamente",
+    newVehiculo: newVehiculo
+
+  })
+})
 
   router.post('/vehiculos', verifyToken, async (req, res) => {
     // res.status(200).send(decoded);
@@ -86,7 +102,7 @@ router.post('/vehiculos/rent', async (req, res) => {
       return res.status(404).send("No user found.");
     }
     const tipo = user.type
-    console.log("Este es el tipo", req.userId)
+    console.log("Este es el tipo", tipo)
     if (tipo === "1") {
       const objeto = { idUser: (user._id).toString() }
       const arrendador = await mongoConnectionArrendador.getUserWhere(objeto)
