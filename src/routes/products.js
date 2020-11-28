@@ -72,8 +72,8 @@ router.post('/vehiculos/rent', async (req, res) => {
   res.status(200).json({
     message: "vehiculo alquilado correctamente",
     newVehiculo: newVehiculo
+
   })
-  
 })
 
   router.post('/vehiculos', verifyToken, async (req, res) => {
