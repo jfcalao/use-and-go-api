@@ -104,9 +104,10 @@ router.post('/vehiculos/unrent', async (req, res) => {
     const tipo = user.type
     console.log("Este es el tipo", tipo)
     if (tipo === "1") {
-      const objeto = { idUser: (user._id).toString() }
+      const objeto = { idUser: (user._id) }
       const arrendador = await mongoConnectionArrendador.getUserWhere(objeto)
 
+      console.log("Esto es arrendador posicion cero ", arrendador[0])
       const idVehiculos = arrendador[0].vehiculos
       console.log("Este es id vehiculos", idVehiculos)
 
