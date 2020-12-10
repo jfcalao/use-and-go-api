@@ -25,7 +25,7 @@ router.post('/vehiculos/register', verifyToken, async (req, res) => {
   const user = await mongoConnectionUsers.getUser(req.userId);
   const userId = req.userId
 
-  const objeto = { idUser: (user._id).toString() }
+  const objeto = { idUser: (user._id)}
   const arrendador = await mongoConnectionArrendador.getUserWhere(objeto)
   const vehiculoId = await mongoConnectionVehiculos.createVehiculo({ modelo, descripcion, tipo, año, foto, alquilado:false, id_arrendador: arrendador[0]._id })
   console.log("de ", vehiculoId)

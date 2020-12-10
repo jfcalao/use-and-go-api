@@ -21,7 +21,7 @@ app.use(require('./routes/products'))
 //app.get('/', cors(corsOptions), (req, res)=>{
 app.get('/', cors(), (req, res)=>{
   //app.get('/', (req, res)=>{
-  res.json('Welcome to carivest API')
+  res.json('Welcome to useAndGo API')
 })
 // Starting server
 app.listen(app.get('port'), ()=>{
